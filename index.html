@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FSQA-VARDA-SYSTEM</title>
+<style>
+:root{
+  --primary:#d71920;--secondary:#ffd400;--accent:#fff;--ink:#111827;--muted:#6b7280;--bg:#f3f4f6;
+  --paperW:210mm;--paperH:297mm;--tagW:7cm;--tagH:4.6cm;--cols:2;--logoSize:30px;
+  --headFont:Arial,Helvetica,sans-serif;--dateFont:Arial,Helvetica,sans-serif;--nameFont:Arial,Helvetica,sans-serif;--bodyFont:Arial,Helvetica,sans-serif;
+  --headWeight:1000;--dateWeight:1000;--nameWeight:900;--bodyWeight:800;
+  --headScale:1;--dateScale:1;--nameScale:1;--bodyScale:1;--autoScale:1;--fitScale:1;
+}
+*{box-sizing:border-box}
+html,body,.sheet,.sheet *,.tag,.tag *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;forced-color-adjust:none}
+body{margin:0;background:var(--bg);font-family:var(--bodyFont);color:var(--ink)}
+body.access-locked header,body.access-locked main{filter:blur(3px);pointer-events:none;user-select:none}
+.accessOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#111827,#7f1d1d);z-index:9999;display:flex;align-items:center;justify-content:center;padding:22px}
+body:not(.access-locked) .accessOverlay{display:none}
+.accessCard{width:min(450px,94vw);background:#fff;border-radius:24px;padding:24px;box-shadow:0 35px 90px rgba(0,0,0,.45);border:3px solid var(--secondary);text-align:center}
+.accessCard h2{margin:0 0 8px;font-size:22px}.accessCard p{font-size:13px;color:#4b5563;font-weight:800;line-height:1.35}
+.accessCard input{width:100%;padding:13px;border:2px solid #d1d5db;border-radius:10px;text-align:center;font-size:16px;font-weight:900;letter-spacing:.08em}
+.accessCard button{width:100%;margin-top:10px}
+.accessError{display:none;margin-top:10px;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:12px;padding:9px;font-size:12px;font-weight:900}.accessError.show{display:block}
+.accessLegal{font-size:11px;color:#6b7280;line-height:1.35;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px}
+header{position:sticky;top:0;z-index:20;background:#111827;color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 4px 18px rgba(0,0,0,.2)}
+header h1{font-size:18px;margin:0}header .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+button,.fileLabel{border:0;border-radius:10px;padding:10px 13px;font-weight:850;cursor:pointer;background:var(--secondary);color:#111827;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+button.secondary{background:#fff}button.danger{background:#fee2e2;color:#991b1b}button.small{padding:7px 10px;font-size:12px;border-radius:8px}
+.modeBadge{display:inline-flex;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:950;background:#374151;color:#fff}.modeBadge.admin{background:#166534}
+.app{display:grid;grid-template-columns:minmax(370px,500px) 1fr;gap:18px;padding:18px;align-items:start}
+.panel{background:#fff;border-radius:18px;padding:16px;box-shadow:0 10px 30px rgba(17,24,39,.08);border:1px solid #e5e7eb}
+.panel h2{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px}.panel h2 span{background:var(--primary);color:#fff;border-radius:999px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+label{font-size:12px;color:#374151;font-weight:800;display:block;margin-bottom:5px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:10px;background:#fff;font-size:13px;outline-color:var(--primary)}
+input[type=color]{height:40px;padding:4px}input[type=range]{padding:0}.hint{font-size:12px;color:var(--muted);line-height:1.35;margin-top:7px}
+.dateModeRow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.modeBtn{background:#f3f4f6;border:2px solid #e5e7eb}.modeBtn.active{background:var(--secondary);border-color:var(--primary);box-shadow:0 0 0 3px rgba(215,25,32,.10)}
+.staffIntroBox{background:linear-gradient(135deg,#fff7ed,#fff);border:2px solid color-mix(in srgb,var(--primary) 45%,#fff);border-radius:18px;padding:14px;margin:14px 0;box-shadow:0 12px 28px rgba(215,25,32,.10)}
+.stepGrid{display:grid;gap:7px;margin:10px 0}.stepItem{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:9px 10px;display:flex;gap:9px;font-size:12px;font-weight:750;line-height:1.25}.stepNo{background:var(--primary);color:#fff;border-radius:999px;min-width:23px;height:23px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:1000}
+.glowGuideBtn{position:relative;width:100%;font-size:14px;padding:13px 14px;border:2px solid var(--primary);background:var(--secondary);animation:vardaPulse 1.55s ease-in-out infinite}.glowGuideBtn:after{content:"UNANG GAWIN";position:absolute;right:10px;top:-11px;background:var(--primary);color:#fff;border-radius:999px;font-size:9px;padding:3px 7px;letter-spacing:.04em}@keyframes vardaPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.bulkPasteBox{background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:12px;margin-top:14px}.bulkPasteBox textarea{min-height:135px;resize:vertical;font-family:Consolas,Monaco,monospace;line-height:1.35}.bulkActions{display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-top:10px}.bulkActions .miniField{width:160px}.countBadge{display:inline-flex;align-items:center;justify-content:center;background:#111827;color:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:850}
+.menuTableWrap{max-height:50vh;overflow:auto;border:1px solid #e5e7eb;border-radius:14px}table{border-collapse:collapse;width:100%;font-size:12px;background:#fff}th{position:sticky;top:0;background:#f9fafb;z-index:1;text-align:left;color:#374151;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #e5e7eb;padding:8px}td{border-bottom:1px solid #f3f4f6;padding:6px;vertical-align:top}td input,td textarea{font-size:12px;padding:7px;border-radius:8px;min-width:70px}td .name{min-width:170px}td .notes{min-width:130px;resize:vertical;min-height:34px}
+.previewPanel{position:sticky;top:72px;min-width:0}.previewTop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.scaleBox{display:flex;gap:8px;align-items:center;font-size:12px;color:#6b7280}
+.paperStage{overflow:auto;background:#cbd5e1;border-radius:18px;padding:22px;max-height:calc(100vh - 150px);border:1px solid #94a3b8}.sheet{width:var(--paperW);min-height:var(--paperH);background:#fff;margin:auto;padding:9mm;display:grid;grid-template-columns:repeat(var(--cols),var(--tagW));justify-content:start;align-content:start;gap:5mm;box-shadow:0 15px 45px rgba(0,0,0,.25);transform-origin:top center}
+.tag{--fitScale:1;border:2px solid var(--primary);border-radius:14px;overflow:hidden;background:var(--accent);position:relative;width:var(--tagW);height:var(--tagH);break-inside:avoid;display:flex;flex-direction:column}
+.tagHeader{background:linear-gradient(90deg,var(--primary),color-mix(in srgb,var(--primary) 80%,#000));color:#fff;display:flex;align-items:center;gap:calc(7px * var(--autoScale) * var(--fitScale));padding:calc(7px * var(--autoScale) * var(--fitScale)) calc(8px * var(--autoScale) * var(--fitScale));flex:0 0 auto}.logoBox{width:var(--logoSize);height:var(--logoSize);border-radius:7px;background:#fff;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto;color:var(--primary);font-weight:1000;font-size:calc(9px * var(--autoScale) * var(--fitScale));text-align:center;line-height:1}.logoBox img{width:100%;height:100%;object-fit:contain}.headText{min-width:0;flex:1;font-family:var(--headFont);font-size:calc(12px * var(--headScale) * var(--autoScale) * var(--fitScale));line-height:1.02;font-weight:var(--headWeight);text-transform:uppercase;letter-spacing:.02em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tagBody{padding:calc(8px * var(--autoScale)) calc(9px * var(--autoScale));display:flex;flex-direction:column;gap:calc(6px * var(--autoScale) * var(--fitScale));flex:1;min-height:0}.dateBox{background:color-mix(in srgb,var(--secondary) 35%,#fff);border:2px solid color-mix(in srgb,var(--primary) 42%,#fff);border-radius:12px;padding:calc(6px * var(--autoScale) * var(--fitScale));text-align:center}.dateValue{font-family:var(--dateFont);font-size:calc(19px * var(--dateScale) * var(--autoScale) * var(--fitScale));font-weight:var(--dateWeight);line-height:.98;color:var(--primary);text-transform:uppercase;word-break:break-word}.itemName{font-family:var(--nameFont);font-size:calc(14px * var(--nameScale) * var(--autoScale) * var(--fitScale));font-weight:var(--nameWeight);line-height:1.03;text-align:center;text-transform:uppercase;color:#111827;word-break:break-word}.noteLine{margin-top:auto;font-family:var(--bodyFont);font-size:calc(9px * var(--bodyScale) * var(--autoScale) * var(--fitScale));font-weight:var(--bodyWeight);line-height:1.08;text-align:center;color:#374151;background:#f9fafb;border:1px dashed #d1d5db;border-radius:10px;padding:calc(4px * var(--autoScale) * var(--fitScale))}.tag.noNotes .noteLine,.noNotes .noteLine{display:none}.classic .tag{border-color:#111827}.compact .tagBody{gap:calc(4px * var(--autoScale) * var(--fitScale));padding:calc(6px * var(--autoScale)) calc(7px * var(--autoScale))}.bold .tag{border-width:3px;box-shadow:inset 0 0 0 3px var(--secondary)}
+.adminLockedNotice{display:none;margin-top:10px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:12px;padding:10px;font-size:12px;font-weight:850;line-height:1.35}body.admin-locked .adminLockedNotice{display:block}body.admin-locked .adminOnlyControl{opacity:.55;filter:saturate(.65)}
+.modalOverlay{position:fixed;inset:0;background:rgba(17,24,39,.62);display:none;align-items:center;justify-content:center;padding:18px;z-index:120}.modalOverlay.show{display:flex}.modal{width:min(700px,96vw);background:#fff;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;border:1px solid #e5e7eb}.modalHead{background:#111827;color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}.modalHead h2{margin:0;font-size:18px}.modalBody{padding:18px;line-height:1.45;font-size:14px}.protectionBox{border:1px solid #fecaca;background:#fff7ed;border-radius:14px;padding:12px;margin:10px 0}.protectionBox b{color:#991b1b}.aboutGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.aboutGrid div{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:10px}.protectedFoot{font-size:11px;color:#6b7280;border-top:1px solid #e5e7eb;margin-top:12px;padding-top:10px}.toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:12px 14px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.2);opacity:0;pointer-events:none;transform:translateY(10px);transition:.2s;z-index:99;font-size:13px}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1100px){.app{grid-template-columns:1fr}.previewPanel{position:static}.paperStage{max-height:none}}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;forced-color-adjust:none!important}body{background:white!important}header,.leftPanel,.previewTop,.toast,.accessOverlay{display:none!important}.app{display:block;padding:0}.previewPanel{position:static;padding:0;box-shadow:none;border:0}.paperStage{padding:0;overflow:visible;background:white;border:0;border-radius:0;max-height:none}.sheet{box-shadow:none;margin:0;transform:none!important;width:var(--paperW)!important;min-height:var(--paperH)!important;page-break-after:always}@page{size:auto;margin:0}}
+</style>
+</head>
+<body class="access-locked admin-locked protected-mode">
+<div class="accessOverlay" id="accessOverlay">
+<form class="accessCard" id="accessForm">
+<h2>VARDA FSQA ACCESS</h2>
+<p>FSQA-VARDA-SYSTEM<br>For authorized Varda Group staff only.</p>
+<label for="accessPassword">Enter staff password</label>
+<input id="accessPassword" type="password" autocomplete="off" placeholder="Password" autofocus>
+<button type="submit">Open FSQA System</button>
+<div class="accessError" id="accessError">Wrong password. Please ask your supervisor for the official password.</div>
+<div class="accessLegal">This tool is for Varda use only and covered by company confidentiality/NDA expectations. Unauthorized copying, modification, sharing, or redistribution is not allowed.</div>
+</form>
+</div>
+<header>
+<h1>FSQA-VARDA-SYSTEM</h1>
+<div class="actions">
+<span class="modeBadge" id="modeBadge">Staff Mode</span>
+<button class="secondary" id="aboutBtn">About / Protection</button>
+<button class="secondary" id="adminBtn">Admin Unlock</button>
+<button class="secondary" id="masterBtn">Master Control</button>
+<button id="printBtn">I-print Ito</button>
+<button class="secondary" id="saveBtn">Save File</button>
+<label class="fileLabel" for="importFile">Import File</label>
+<input id="importFile" type="file" accept="application/json" hidden>
+</div>
+</header>
+<main class="app">
+<section class="panel leftPanel">
+<h2><span>1</span> Uri ng FSQA tag</h2>
+<div class="dateModeRow">
+<button class="modeBtn active" id="consumeBtn" type="button">Consume Before</button>
+<button class="modeBtn" id="produceBtn" type="button">Produced / Delivery Date</button>
+</div>
+<div class="hint">Piliin kung expiration/consume tag or produced/delivery tag ang gagawin.</div>
+<div class="staffIntroBox">
+<h2>Tagalog Quick Guide</h2>
+<div class="stepGrid">
+<div class="stepItem"><span class="stepNo">1</span><div>I-paste o i-type ang listahan ng ulam o package set.</div></div>
+<div class="stepItem"><span class="stepNo">2</span><div>Ilagay ang date/time: halimbawa <b>1:00PM JUNE 23, 2026</b>.</div></div>
+<div class="stepItem"><span class="stepNo">3</span><div>I-click ang <b>Gumawa ng FSQA Tags</b>.</div></div>
+<div class="stepItem"><span class="stepNo">4</span><div>I-review ang preview, notes, fonts, at tag size.</div></div>
+<div class="stepItem"><span class="stepNo">5</span><div>I-click ang <b>I-print Ito</b> at siguraduhin naka-ON ang Background Graphics.</div></div>
+</div>
+<button class="glowGuideBtn" id="focusPasteBtn" type="button">I-paste ang Listahan Dito</button>
+</div>
+<div class="bulkPasteBox">
+<label id="bulkLabel">Paste food viand / package set names — one per line</label>
+<textarea id="bulkNames">SAUTED GARLIC SAYOTE WITH RICE AND EGG
+ADOBO PORK WITH RICE
+BEEF CALDERETA MEAL SET
+CHICKEN INASAL PACK</textarea>
+<div class="bulkActions">
+<div class="miniField"><label>Global date/time text</label><input id="globalDateText" value="1:00PM JUNE 23, 2026"></div>
+<div class="miniField"><label>Default notes</label><input id="defaultNotes" value="Keep covered / FSQA checked"></div>
+<button id="generateBtn" type="button">Gumawa ng FSQA Tags</button>
+<span class="countBadge" id="countBadge">4 tags</span>
+</div>
+<div class="hint">Tip: puwedeng pangalan lang per line. Pwede rin ganito: <b>Ulam | Date/Time | Notes</b></div>
+</div>
+<h2 style="margin-top:16px"><span>2</span> Design / print settings</h2>
+<div class="controls">
+<div class="full adminOnlyControl"><label>Upload logo — applies to all FSQA tags</label><input id="logoUpload" type="file" accept="image/*"><div class="hint">Logo will appear on the red header.</div></div>
+<div class="adminOnlyControl"><label>Primary color</label><input id="primaryColor" type="color" value="#d71920"></div>
+<div class="adminOnlyControl"><label>Highlight color</label><input id="secondaryColor" type="color" value="#ffd400"></div>
+<div class="adminOnlyControl"><label>Tag background</label><input id="accentColor" type="color" value="#ffffff"></div>
+<div class="adminOnlyControl"><label>Design style</label><select id="tagStyle"><option value="bold">Bold FSQA</option><option value="classic">Classic clean</option><option value="compact">Compact many tags</option></select></div>
+<div><label>Paper size</label><select id="paperSize"><option value="A4">A4</option><option value="LONG">Long / Folio 8.5 × 13</option></select></div>
+<div><label>Orientation</label><select id="orientation"><option value="portrait">Portrait</option><option value="landscape">Horizontal / Landscape</option></select></div>
+<div><label>Columns per page</label><input id="columns" type="range" min="1" max="5" value="2"><span id="columnsLabel" class="hint">2 columns</span></div>
+<div><label>Preview zoom</label><input id="zoom" type="range" min=".35" max="1.15" step=".05" value=".75"><span id="zoomLabel" class="hint">75%</span></div>
+<div><label>Tag width (cm)</label><input id="tagWidthCm" type="number" min="2" max="20" step="0.1" value="7.0"></div>
+<div><label>Tag height (cm)</label><input id="tagHeightCm" type="number" min="2" max="20" step="0.1" value="4.6"></div>
+<div class="full"><label><input id="showNotes" type="checkbox" checked style="width:auto;margin-right:8px"> Show notes on tag</label></div>
+<div class="full adminLockedNotice">Staff Mode is active. Logo, colors, design style, and font settings are protected. Use Admin Unlock to change system design settings.</div>
+<div class="adminOnlyControl"><label>Header font</label><select id="headFont"></select></div><div class="adminOnlyControl"><label>Header boldness</label><select id="headWeight"></select></div>
+<div class="adminOnlyControl"><label>Date font</label><select id="dateFont"></select></div><div class="adminOnlyControl"><label>Date boldness</label><select id="dateWeight"></select></div>
+<div class="adminOnlyControl"><label>Name font</label><select id="nameFont"></select></div><div class="adminOnlyControl"><label>Name boldness</label><select id="nameWeight"></select></div>
+<div class="adminOnlyControl"><label>Notes/body font</label><select id="bodyFont"></select></div><div class="adminOnlyControl"><label>Notes boldness</label><select id="bodyWeight"></select></div>
+<div class="adminOnlyControl"><label>Header size</label><input id="headScale" type="range" min=".45" max="1.6" step=".05" value="1"><span id="headScaleLabel" class="hint">100%</span></div>
+<div class="adminOnlyControl"><label>Date size</label><input id="dateScale" type="range" min=".45" max="1.8" step=".05" value="1"><span id="dateScaleLabel" class="hint">100%</span></div>
+<div class="adminOnlyControl"><label>Name size</label><input id="nameScale" type="range" min=".45" max="1.6" step=".05" value="1"><span id="nameScaleLabel" class="hint">100%</span></div>
+<div class="adminOnlyControl"><label>Notes size</label><input id="bodyScale" type="range" min=".45" max="1.5" step=".05" value="1"><span id="bodyScaleLabel" class="hint">100%</span></div>
+</div>
+<h2 style="margin-top:16px"><span>3</span> Edit individual tags</h2>
+<div class="menuTableWrap"><table><thead><tr><th>Name</th><th>Date/Time</th><th>Notes</th><th>Action</th></tr></thead><tbody id="itemRows"></tbody></table></div>
+</section>
+<section class="panel previewPanel">
+<div class="previewTop"><div><h2 style="margin:0 0 4px"><span>4</span> Printable preview</h2><div class="hint">Print tip: More settings → Background graphics ON. Use Color print mode.</div></div><div class="scaleBox">Actual tag size: <b id="actualSizeLabel">7.0 × 4.6 cm</b></div></div>
+<div class="paperStage"><div id="sheet" class="sheet bold"></div></div>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+<div class="modalOverlay" id="aboutModal"><div class="modal"><div class="modalHead"><h2>About / Protection</h2><button class="secondary small" data-close="aboutModal">Close</button></div><div class="modalBody"><div class="aboutGrid"><div><b>System</b><br>FSQA-VARDA-SYSTEM</div><div><b>Purpose</b><br>Printable consume-before and produced/delivery date tags.</div><div><b>Created by</b><br>EDMAR RIZABAL CASUNCAD</div><div><b>Date / Role</b><br>June 2026<br>National Retail Head of Varda Group</div></div><div class="protectionBox"><b>Varda use only.</b><br>This system is for authorized Varda staff only and is covered by company confidentiality/NDA expectations. Unauthorized copying, editing, sharing, or redistribution is not allowed.</div><div class="protectedFoot">Offline HTML protection is practical deterrence only. For stronger security, deploy an online login-based system.</div></div></div></div>
+<div class="modalOverlay" id="masterModal"><div class="modal"><div class="modalHead"><h2>Master Control</h2><button class="secondary small" data-close="masterModal">Close</button></div><div class="modalBody"><div class="controls"><div class="full"><label>Master password</label><input id="masterPasswordInput" type="password" placeholder="Enter master password"></div><div><label>New staff opening password</label><input id="newStaffPass" type="text"></div><div><label>New admin unlock password</label><input id="newAdminPass" type="text"></div><div class="full"><button id="savePasswordsBtn" type="button">Save Passwords</button></div></div><div class="hint">Default master password: MASTERMIKEY. Password changes save only in this browser/device unless you Save File and Import File on another device.</div></div></div></div>
+<script>
+const $=id=>document.getElementById(id);const STAFF_DEFAULT='SIRMIKEY123?';const ADMIN_DEFAULT='VARDA2026';const MASTER_DEFAULT='MASTERMIKEY';const STORAGE_KEY='fsqa-varda-system-v1';
+const fontOptions=[['Arial, Helvetica, sans-serif','Arial'],['Inter, Arial, sans-serif','Inter-like'],['Verdana, Geneva, sans-serif','Verdana'],['Tahoma, Geneva, sans-serif','Tahoma'],['Trebuchet MS, Arial, sans-serif','Trebuchet'],['Georgia, serif','Georgia'],['Times New Roman, Times, serif','Times New Roman'],['Courier New, Courier, monospace','Courier New'],['Impact, Haettenschweiler, Arial Narrow Bold, sans-serif','Impact'],['Arial Black, Gadget, sans-serif','Arial Black'],['Segoe UI, Arial, sans-serif','Segoe UI'],['Calibri, Arial, sans-serif','Calibri']];
+const weightOptions=[['400','Regular'],['600','Slight Bold'],['700','Bold'],['850','Strong Bold'],['1000','Extra Bold']];
+function uid(){return Math.random().toString(36).slice(2,9)}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+let state={staffPass:STAFF_DEFAULT,adminPass:ADMIN_DEFAULT,masterPass:MASTER_DEFAULT,isAdmin:false,tagType:'consume',headerConsume:'CONSUME BEFORE:',headerProduce:'PRODUCED / DELIVERY DATE:',globalDateText:'1:00PM JUNE 23, 2026',defaultNotes:'Keep covered / FSQA checked',showNotes:true,primary:'#d71920',secondary:'#ffd400',accent:'#ffffff',style:'bold',logo:'',paperSize:'A4',orientation:'portrait',columns:2,tagWidthCm:7.0,tagHeightCm:4.6,zoom:.75,headFont:'Arial, Helvetica, sans-serif',dateFont:'Arial, Helvetica, sans-serif',nameFont:'Arial, Helvetica, sans-serif',bodyFont:'Arial, Helvetica, sans-serif',headWeight:'1000',dateWeight:'1000',nameWeight:'900',bodyWeight:'800',headScale:1,dateScale:1,nameScale:1,bodyScale:1,items:[{id:uid(),name:'SAUTED GARLIC SAYOTE WITH RICE AND EGG',dateText:'1:00PM JUNE 23, 2026',notes:'Keep covered / FSQA checked'},{id:uid(),name:'ADOBO PORK WITH RICE',dateText:'1:00PM JUNE 23, 2026',notes:'Keep covered / FSQA checked'},{id:uid(),name:'BEEF CALDERETA MEAL SET',dateText:'1:00PM JUNE 23, 2026',notes:'Keep covered / FSQA checked'},{id:uid(),name:'CHICKEN INASAL PACK',dateText:'1:00PM JUNE 23, 2026',notes:'Keep covered / FSQA checked'}]};
+function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}function load(){try{const s=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(s)state={...state,...s,items:s.items||state.items}}catch(e){}}
+function fillSelect(id,opts){const el=$(id);el.innerHTML='';opts.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;el.appendChild(o)})}
+function bindVal(id,key,num=false){const el=$(id);if(!el)return;el.addEventListener('input',()=>{state[key]=num?Number(el.value):el.value;renderPreview();persist()})}
+function setInputs(){const p={globalDateText:'globalDateText',defaultNotes:'defaultNotes',primaryColor:'primary',secondaryColor:'secondary',accentColor:'accent',tagStyle:'style',paperSize:'paperSize',orientation:'orientation',columns:'columns',tagWidthCm:'tagWidthCm',tagHeightCm:'tagHeightCm',zoom:'zoom',headFont:'headFont',dateFont:'dateFont',nameFont:'nameFont',bodyFont:'bodyFont',headWeight:'headWeight',dateWeight:'dateWeight',nameWeight:'nameWeight',bodyWeight:'bodyWeight',headScale:'headScale',dateScale:'dateScale',nameScale:'nameScale',bodyScale:'bodyScale'};Object.entries(p).forEach(([id,k])=>{if($(id))$(id).value=state[k]});$('showNotes').checked=!!state.showNotes;$('newStaffPass').value=state.staffPass;$('newAdminPass').value=state.adminPass;updateModeButtons()}
+function paperDims(){let w=210,h=297;if(state.paperSize==='LONG'){w=215.9;h=330.2}if(state.orientation==='landscape')[w,h]=[h,w];return{w,h}}
+function updateAuto(){const w=Number(state.tagWidthCm)||7,h=Number(state.tagHeightCm)||4.6;const scale=Math.max(.62,Math.min(1.18,(Math.sqrt(w*h)/5.7)*(Math.min(w,h)/4.5)));document.documentElement.style.setProperty('--autoScale',scale.toFixed(3));document.documentElement.style.setProperty('--logoSize',Math.max(20,Math.min(42,h*7.2))+'px')}
+function headerText(){return state.tagType==='produce'?state.headerProduce:state.headerConsume}
+function updateModeButtons(){$('consumeBtn').classList.toggle('active',state.tagType==='consume');$('produceBtn').classList.toggle('active',state.tagType==='produce');$('bulkLabel').textContent=state.tagType==='consume'?'Paste food viand names — one per line':'Paste package set / item names — one per line'}
+function renderPreview(){document.documentElement.style.setProperty('--primary',state.primary);document.documentElement.style.setProperty('--secondary',state.secondary);document.documentElement.style.setProperty('--accent',state.accent);document.documentElement.style.setProperty('--cols',state.columns);document.documentElement.style.setProperty('--tagW',(Number(state.tagWidthCm)||7)+'cm');document.documentElement.style.setProperty('--tagH',(Number(state.tagHeightCm)||4.6)+'cm');['headFont','dateFont','nameFont','bodyFont','headWeight','dateWeight','nameWeight','bodyWeight','headScale','dateScale','nameScale','bodyScale'].forEach(k=>document.documentElement.style.setProperty('--'+k,state[k]));updateAuto();const d=paperDims();document.documentElement.style.setProperty('--paperW',d.w+'mm');document.documentElement.style.setProperty('--paperH',d.h+'mm');$('columnsLabel').textContent=state.columns+' column'+(state.columns>1?'s':'');$('zoomLabel').textContent=Math.round(state.zoom*100)+'%';$('headScaleLabel').textContent=Math.round(state.headScale*100)+'%';$('dateScaleLabel').textContent=Math.round(state.dateScale*100)+'%';$('nameScaleLabel').textContent=Math.round(state.nameScale*100)+'%';$('bodyScaleLabel').textContent=Math.round(state.bodyScale*100)+'%';$('actualSizeLabel').textContent=state.tagWidthCm+' × '+state.tagHeightCm+' cm';$('countBadge').textContent=state.items.length+' tag'+(state.items.length!==1?'s':'');const sheet=$('sheet');sheet.className='sheet '+state.style+(state.showNotes?'':' noNotes');sheet.style.transform='scale('+state.zoom+')';sheet.style.marginBottom='calc('+d.h+'mm * '+(state.zoom-1)+' + 20px)';sheet.innerHTML='';state.items.forEach(it=>{const tag=document.createElement('article');tag.className='tag'+(state.showNotes?'':' noNotes');tag.innerHTML='<div class="tagHeader"><div class="logoBox">'+(state.logo?'<img src="'+state.logo+'" alt="logo">':'FSQA')+'</div><div class="headText">'+esc(headerText())+'</div></div><div class="tagBody"><div class="dateBox"><div class="dateValue">'+esc(it.dateText||state.globalDateText||'DATE/TIME')+'</div></div><div class="itemName">'+esc(it.name||'ITEM NAME')+'</div><div class="noteLine">'+esc(it.notes||'')+'</div></div>';sheet.appendChild(tag)});requestAnimationFrame(autoFitAllTags)}
+function autoFitAllTags(){document.querySelectorAll('.tag').forEach(tag=>{tag.style.setProperty('--fitScale',1);for(let i=0;i<9;i++){const over=tag.scrollHeight>tag.clientHeight+1||tag.scrollWidth>tag.clientWidth+1;if(!over)break;const cur=parseFloat(getComputedStyle(tag).getPropertyValue('--fitScale'))||1;tag.style.setProperty('--fitScale',Math.max(.52,cur-.06).toFixed(2))}})}
+function renderRows(){const tb=$('itemRows');tb.innerHTML='';state.items.forEach((it,idx)=>{const tr=document.createElement('tr');tr.innerHTML='<td><input class="name" value="'+esc(it.name)+'" data-idx="'+idx+'" data-field="name"></td><td><input value="'+esc(it.dateText)+'" data-idx="'+idx+'" data-field="dateText"></td><td><textarea class="notes" data-idx="'+idx+'" data-field="notes">'+esc(it.notes||'')+'</textarea></td><td><button class="small danger" data-del="'+idx+'" type="button">Remove</button></td>';tb.appendChild(tr)});tb.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('input',()=>{state.items[Number(el.dataset.idx)][el.dataset.field]=el.value;renderPreview();persist()}));tb.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>{state.items.splice(Number(btn.dataset.del),1);renderAll();toast('Removed.')}))}
+function parseLine(line){let raw=line.trim();if(!raw)return null;raw=raw.replace(/^[-*•\d.)\s]+/,'').trim();const p=raw.includes('|')?raw.split('|').map(x=>x.trim()):[raw];return{id:uid(),name:p[0]||raw,dateText:p[1]||state.globalDateText,notes:p[2]||state.defaultNotes}}
+function generateFromBulk(){state.globalDateText=$('globalDateText').value||state.globalDateText;state.defaultNotes=$('defaultNotes').value||'';const rows=($('bulkNames').value||'').split(/\r?\n/).map(parseLine).filter(Boolean);if(!rows.length){toast('Paste at least one item name.');return}state.items=rows;renderAll();toast('Generated '+rows.length+' FSQA tags.')}
+function renderAll(){setInputs();renderRows();renderPreview();applyProtection();persist()}
+function applyProtection(){document.body.classList.toggle('admin-locked',!state.isAdmin);$('modeBadge').textContent=state.isAdmin?'Admin Mode':'Staff Mode';$('modeBadge').classList.toggle('admin',state.isAdmin);document.querySelectorAll('.adminOnlyControl input,.adminOnlyControl select,.adminOnlyControl textarea').forEach(el=>el.disabled=!state.isAdmin)}
+function openModal(id){$(id).classList.add('show')}function closeModal(id){$(id).classList.remove('show')}
+function init(){fillSelect('headFont',fontOptions);fillSelect('dateFont',fontOptions);fillSelect('nameFont',fontOptions);fillSelect('bodyFont',fontOptions);fillSelect('headWeight',weightOptions);fillSelect('dateWeight',weightOptions);fillSelect('nameWeight',weightOptions);fillSelect('bodyWeight',weightOptions);load();setInputs();renderRows();renderPreview();applyProtection();
+$('accessForm').addEventListener('submit',e=>{e.preventDefault();if($('accessPassword').value===state.staffPass){document.body.classList.remove('access-locked');$('accessError').classList.remove('show');toast('Welcome to FSQA-VARDA-SYSTEM.')}else $('accessError').classList.add('show')});
+$('consumeBtn').onclick=()=>{state.tagType='consume';updateModeButtons();renderPreview();persist()};$('produceBtn').onclick=()=>{state.tagType='produce';updateModeButtons();renderPreview();persist()};$('focusPasteBtn').onclick=()=>{$('bulkNames').focus();$('bulkNames').select()};$('generateBtn').onclick=generateFromBulk;$('printBtn').onclick=()=>window.print();$('aboutBtn').onclick=()=>openModal('aboutModal');$('masterBtn').onclick=()=>openModal('masterModal');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
+$('adminBtn').onclick=()=>{if(state.isAdmin){state.isAdmin=false;applyProtection();persist();toast('Back to Staff Mode.');return}const p=prompt('Enter admin password:');if(p===state.adminPass){state.isAdmin=true;applyProtection();persist();toast('Admin Mode unlocked.')}else if(p!==null)toast('Wrong admin password.')};
+$('savePasswordsBtn').onclick=()=>{if($('masterPasswordInput').value!==state.masterPass){toast('Wrong master password.');return}state.staffPass=$('newStaffPass').value||state.staffPass;state.adminPass=$('newAdminPass').value||state.adminPass;persist();toast('Passwords updated for this browser/device.');$('masterPasswordInput').value=''};
+['globalDateText','defaultNotes'].forEach(id=>bindVal(id,id));bindVal('primaryColor','primary');bindVal('secondaryColor','secondary');bindVal('accentColor','accent');bindVal('tagStyle','style');bindVal('paperSize','paperSize');bindVal('orientation','orientation');bindVal('columns','columns',true);bindVal('tagWidthCm','tagWidthCm',true);bindVal('tagHeightCm','tagHeightCm',true);bindVal('zoom','zoom',true);['headFont','dateFont','nameFont','bodyFont','headWeight','dateWeight','nameWeight','bodyWeight'].forEach(id=>bindVal(id,id));['headScale','dateScale','nameScale','bodyScale'].forEach(id=>bindVal(id,id,true));
+$('showNotes').onchange=()=>{state.showNotes=$('showNotes').checked;renderPreview();persist()};$('logoUpload').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.logo=r.result;renderPreview();persist()};r.readAsDataURL(f)};
+$('saveBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fsqa-varda-system-file.json';a.click();URL.revokeObjectURL(a.href)};
+$('importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);state={...state,...data,items:data.items||state.items};renderAll();toast('File imported.')}catch(err){toast('Invalid file.')}};r.readAsText(f)};
+document.addEventListener('contextmenu',e=>{if(!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))e.preventDefault()});document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if((e.ctrlKey&&['s','u'].includes(k))||k==='f12'){e.preventDefault();toast('Protected system shortcut.')}})}
+init();
+</script>
+</body></html>
